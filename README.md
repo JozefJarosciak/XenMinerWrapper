@@ -22,7 +22,9 @@ Welcome to the XenMiner UI Wrapper, a Python-based user interface for XenMiner. 
 ## Demo
 
 A video demo of the XenMiner UI Wrapper in action is here:
-https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/0835f39c-1cbd-45e1-9635-2576a3bf5889
+
+https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/1b49ff87-8ed0-4f89-bd04-9608512ab00c
+
 
 
 
