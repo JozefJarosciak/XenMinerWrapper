@@ -7,6 +7,7 @@ import re
 import subprocess
 from datetime import datetime
 import psutil
+import webbrowser
 
 class MinerApp(tk.Tk):
 
@@ -165,7 +166,7 @@ class MinerApp(tk.Tk):
             # Add the new process to the list of running processes
 
             with self.lock:
-                 self.running_processes.append(process)
+                self.running_processes.append(process)
 
             while True:
                 line = process.stdout.readline()
