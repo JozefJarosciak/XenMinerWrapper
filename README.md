@@ -39,7 +39,8 @@ Ubuntu:
 
 
 Mac:
-Please send me the screenshot
+[<img src="[https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/39feb6ba-ce7a-4ec8-96e0-b379fd628763]([https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/2554b79f-20d1-42a5-ae70-521fb8fcd8f0](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/2554b79f-20d1-42a5-ae70-521fb8fcd8f0))" width="200" height="150" alt="Ubuntu">](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/39feb6ba-ce7a-4ec8-96e0-b379fd628763)
+
 
 ## Acknowledgments
 
