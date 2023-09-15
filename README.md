@@ -45,8 +45,10 @@ Please send me the screenshot
 
 This UI wrapper for XenMiner was developed to enhance the user experience and make mining more accessible to everyone. The original XenMiner script that this wrapper leverages was created by Jack Levin (https://github.com/jacklevin74/xenminer).
 The UI and integration are Xen.pub's contributions to this open-source project.
+
 Find me or contact me on Twitter: [https://twitter.com/home](https://twitter.com/jarosciak)
-Our on our website: https://Xen.pub
+
+Or on our website: https://Xen.pub
 
 ## License
 
