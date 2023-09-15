@@ -5,7 +5,7 @@ Welcome to the XEN.pub's XenMiner Wrapper, a Python-based user interface for Xen
 ## Features
 
 1. **User-Friendly Interface**: No need to tinker with the code or command line. Set your Ethereum address and other options directly from the UI.
-2. **Automatic Script Update**: The application fetches the latest version of Jack's XenMiner script from GitHub everytime you press the Run button, ensuring you're always using the most recent and optimized version.
+2. **Automatic Script Update**: The application fetches the latest version of Jack's XenMiner script from GitHub every time you press the Run button, ensuring you're always using the most recent and optimized version.
 3. **Ethereum Address Swap**: Automatically replaces Jack's Ethereum address with yours, ensuring that mining rewards go directly to your account.
 4. **One-Click Execution**: Run the miner script (as many times as your computer can handle) with just one click.
 5. **Parallel Execution**: Execute the miner as many times as the physical CPU cores on your computer, maximizing your mining potential.
@@ -39,8 +39,8 @@ Ubuntu:
 
 
 Mac:
-[<img src="[https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/39feb6ba-ce7a-4ec8-96e0-b379fd628763]([https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/2554b79f-20d1-42a5-ae70-521fb8fcd8f0](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/2554b79f-20d1-42a5-ae70-521fb8fcd8f0))" width="200" height="150" alt="Ubuntu">](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/39feb6ba-ce7a-4ec8-96e0-b379fd628763)
 
+[<img src="https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/2554b79f-20d1-42a5-ae70-521fb8fcd8f0" width="200" height="150" alt="Ubuntu">](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/2554b79f-20d1-42a5-ae70-521fb8fcd8f0)
 
 ## Acknowledgments
 
