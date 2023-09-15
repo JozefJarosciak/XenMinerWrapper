@@ -28,6 +28,8 @@ https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/1b49ff87-8ed0-4
 
 
 ## Screenshots:
+![image](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/80a10774-fecd-493e-a5e6-d9e1a8973815)
+
 
 Windows:
 
