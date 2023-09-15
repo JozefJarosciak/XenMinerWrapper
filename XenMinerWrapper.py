@@ -279,7 +279,8 @@ class MinerApp(tk.Tk):
             {"text": "XenMiner", "url": "https://github.com/jacklevin74/xenminer"},
             {"text": "XenMinerWrapper", "url": "https://github.com/JozefJarosciak/XenMinerWrapper/"},
             {"text": "Xen.pub", "url": "https://xen.pub"},
-            {"text": "Follow me on X.com", "url": "https://twitter.com/jarosciak"}
+            {"text": "X.com (Jack)", "url": "https://twitter.com/mrJackLevin"},
+            {"text": "X.com (Jozef)", "url": "https://twitter.com/jarosciak"}
         ]
 
         # Create a label with the text "Links:" and place it in the footer frame.
