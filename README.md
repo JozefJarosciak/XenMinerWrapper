@@ -1,6 +1,6 @@
-# XenMiner UI Wrapper
+# XEN.pub's XenMiner UI Wrapper
 
-Welcome to the XenMiner UI Wrapper, a Python-based user interface for XenMiner. This tool simplifies the process of setting up and running the XenMiner by providing a user-friendly interface that seamlessly works across Linux, macOS, and Windows.
+Welcome to the Xen.pub's XenMiner UI Wrapper, a Python-based user interface for XenMiner. This tool simplifies the process of setting up and running the XenMiner by providing a user-friendly interface that seamlessly works across Linux, macOS, and Windows.
 
 ## Features
 

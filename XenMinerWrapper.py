@@ -13,7 +13,7 @@ class MinerApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("XenMiner App")
+        self.title("XEN.pub's XenMiner App")
         self.geometry("800x600")
 
         # XenMiner location label and textbox
