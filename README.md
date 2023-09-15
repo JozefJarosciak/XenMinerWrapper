@@ -48,9 +48,8 @@ The UI and integration are Xen.pub's contributions to this open-source project.
 
 Find me or contact me on Twitter: [https://twitter.com/jarosciak](https://twitter.com/jarosciak)
 
-Or on our website: https://Xen.pub
+Or on our website: https://Xen.pub 
 
 ## License
 
 This project is open-source. Please refer to the `LICENSE` file for more details.
- 
