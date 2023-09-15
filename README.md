@@ -17,14 +17,14 @@ Welcome to the XEN.pub's XenMiner Wrapper, a Python-based user interface for Xen
 2. Then pip install -U -r requirements.txt
 3. Clone or download the repository.
 4. Run the `XenMiner UI Wrapper` script.
-5. Enter your Ethereum address, enter path to your Python executable and select other options as needed.
+5. Enter your Ethereum address, enter the path to your Python executable and select other options as needed.
 6. Click on the "Run" button to start mining.
 
 ## Demo
 
 A video demo of the XenMiner UI Wrapper in action:
 
-https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/1b49ff87-8ed0-4f89-bd04-9608512ab00c
+https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/e4c9240f-fe0d-450b-aaa4-749b9c52f6e3
 
 
 ## Screenshots:
