@@ -7,7 +7,6 @@ import re
 import subprocess
 from datetime import datetime
 import psutil
-import webbrowser
 
 class MinerApp(tk.Tk):
 
