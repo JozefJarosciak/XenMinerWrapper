@@ -13,6 +13,7 @@ class MinerApp(tk.Tk):
 
     def __init__(self):
         super().__init__()
+        self.lock = threading.Lock()
 
         self.title("XEN.pub's XenMiner Wrapper")
         self.geometry("800x600")
@@ -106,7 +107,8 @@ class MinerApp(tk.Tk):
         process = subprocess.Popen([python_env, 'miner.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
         # Add the new process to the list of running processes
-        self.running_processes.append(process)
+        with self.lock:
+            self.running_processes.append(process)
 
         # Download miner.py from the given location
         try:
@@ -152,33 +154,36 @@ class MinerApp(tk.Tk):
 
     def run_miner_script(self, output_widget):
         python_env = self.python_env.get().strip()
-        max_lines = 4000  # set the maximum number of lines
-        lines_since_last_trim = 0  # counter for lines added since the last trim
-        trim_frequency = 2000  # trim the widget every 50 lines
 
         def run():
-            nonlocal lines_since_last_trim
-            process = subprocess.Popen([python_env, 'miner.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            process = subprocess.Popen(
+                [python_env, 'miner.py'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True
+            )
 
             # Add the new process to the list of running processes
-            self.running_processes.append(process)
+
+            with self.lock:
+                 self.running_processes.append(process)
 
             while True:
                 line = process.stdout.readline()
                 if not line:
                     break
+
+                # Append the line to the Text widget
+                # We'll use the widget's own method to ensure that GUI updates are thread-safe
                 output_widget.insert(tk.END, line)
                 output_widget.yview(tk.END)  # Auto-scroll to the bottom
-                lines_since_last_trim += 1
-
-                # Trim the text widget content to last 1000 lines, but do so every 50 lines
-                if lines_since_last_trim >= trim_frequency:
-                    for _ in range(trim_frequency):
-                        if int(output_widget.index(tk.END).split('.')[0]) > max_lines + 1:  # +1 because of the empty last line in Text widget
-                            output_widget.delete(1.0, 2.0)  # delete the first line
-                    lines_since_last_trim = 0
 
             process.wait()  # Wait until the process completes
+
+
+        # Using a thread to avoid blocking the main UI
+        threading.Thread(target=run, daemon=True).start()
+
 
         # Using a thread to avoid blocking the main UI
         threading.Thread(target=run, daemon=True).start()
@@ -245,14 +250,14 @@ class MinerApp(tk.Tk):
 
     def stop_script(self):
         # Stop all running processes
-        for process in self.running_processes:
-            try:
-                process.terminate()
-            except Exception as e:
-                print(f"Error stopping process: {e}")
-
-        # Clear the list of running processes
-        self.running_processes.clear()
+        with self.lock:
+            for process in self.running_processes:
+                try:
+                    process.terminate()
+                except Exception as e:
+                    print(f"Error stopping process: {e}")
+            # Clear the list of running processes
+            self.running_processes.clear()
 
         # Clear existing tabs
         for tab in self.tab_control.tabs():
