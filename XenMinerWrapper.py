@@ -152,9 +152,9 @@ class MinerApp(tk.Tk):
 
     def run_miner_script(self, output_widget):
         python_env = self.python_env.get().strip()
-        max_lines = 5000  # set the maximum number of lines
+        max_lines = 4000  # set the maximum number of lines
         lines_since_last_trim = 0  # counter for lines added since the last trim
-        trim_frequency = 2500  # trim the widget every 50 lines
+        trim_frequency = 2000  # trim the widget every 50 lines
 
         def run():
             nonlocal lines_since_last_trim
