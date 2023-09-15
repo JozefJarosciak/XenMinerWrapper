@@ -9,7 +9,7 @@ Welcome to the XenMiner UI Wrapper, a Python-based user interface for XenMiner. 
 3. **Ethereum Address Swap**: Automatically replaces Jack's Ethereum address with yours, ensuring that mining rewards go directly to your account.
 4. **One-Click Execution**: Run the miner script (as many times as your computer can handle) with just one click.
 5. **Parallel Execution**: Execute the miner as many times as the physical CPU cores on your computer, maximizing your mining potential.
-6. **Cross-Platform**: Written in Python, this tool is platform-independent and should be able to run on Linux, macOS, and Windows.
+6. **Cross-Platform**: Written in Python, this tool is platform-independent and should be able to run on Windows (confirmed), Linux (Ubuntu confirmed) and macOS.
 
 ## Getting Started
 
