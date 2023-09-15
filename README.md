@@ -29,7 +29,7 @@ https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/1b49ff87-8ed0-4
 
 ## Screenshots:
 
-Windows:        Ubuntu:         Mac:
+Windows | Ubuntu |  Mac
 
 [<img src="https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/7ea6253e-758e-43cc-b825-90c4efee0999" width="200" height="150" alt="Windows">](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/7ea6253e-758e-43cc-b825-90c4efee0999)
 [<img src="https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/39feb6ba-ce7a-4ec8-96e0-b379fd628763" width="200" height="150" alt="Ubuntu">](https://github.com/JozefJarosciak/XenMinerWrapper/assets/3492464/39feb6ba-ce7a-4ec8-96e0-b379fd628763)
