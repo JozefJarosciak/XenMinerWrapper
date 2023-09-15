@@ -160,6 +160,9 @@ class MinerApp(tk.Tk):
             nonlocal lines_since_last_trim
             process = subprocess.Popen([python_env, 'miner.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
+            # Add the new process to the list of running processes
+            self.running_processes.append(process)
+
             while True:
                 line = process.stdout.readline()
                 if not line:
@@ -179,6 +182,7 @@ class MinerApp(tk.Tk):
 
         # Using a thread to avoid blocking the main UI
         threading.Thread(target=run, daemon=True).start()
+
 
 
     def open_webpage(self, url):
