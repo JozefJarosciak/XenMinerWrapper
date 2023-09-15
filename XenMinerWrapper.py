@@ -7,6 +7,7 @@ import re
 import subprocess
 from datetime import datetime
 import psutil
+import webbrowser
 
 class MinerApp(tk.Tk):
 
@@ -15,6 +16,12 @@ class MinerApp(tk.Tk):
 
         self.title("XEN.pub's XenMiner Wrapper")
         self.geometry("800x600")
+
+        # Footer Frame
+        self.footer_frame = self.create_footer_frame()
+
+        # Create links in the footer
+        self.create_links_in_footer()
 
         # XenMiner location label and textbox
         tk.Label(self, text="XenMiner GitHub Location").grid(row=0, column=0, padx=10, pady=10, sticky="e")
@@ -44,8 +51,6 @@ class MinerApp(tk.Tk):
         self.num_parallel.set("1")
         self.num_parallel.grid(row=3, column=1, padx=10, pady=10, sticky="w")
 
-
-
         # Frame for the buttons
         self.button_frame = tk.Frame(self)
         self.button_frame.grid(row=4, column=0, columnspan=2, pady=20)
@@ -64,8 +69,12 @@ class MinerApp(tk.Tk):
         self.grid_rowconfigure(5, weight=1)  # Make sure the notebook expands vertically
         self.grid_columnconfigure(1, weight=1)  # Make sure the notebook expands horizontally
 
+
+
         # List to store running processes
         self.running_processes = []
+
+
 
     def run_script(self):
         # Disable the Run button and Enable the Stop button
@@ -171,6 +180,10 @@ class MinerApp(tk.Tk):
         # Using a thread to avoid blocking the main UI
         threading.Thread(target=run, daemon=True).start()
 
+
+    def open_webpage(self, url):
+        webbrowser.open(url)
+
     def load_python_env(self):
         if os.path.exists('python_env.txt'):
             with open('python_env.txt', 'r') as f:
@@ -249,6 +262,40 @@ class MinerApp(tk.Tk):
         # This function is triggered when the window is closed
         self.stop_script()
         self.destroy()
+
+    def create_footer_frame(self):
+        """
+        Create and return the footer frame.
+        """
+        footer_frame = tk.Frame(self)
+        footer_frame.grid(row=6, column=0, columnspan=2, pady=10, sticky="ew")
+        return footer_frame
+
+    def create_links_in_footer(self):
+        """
+        Create links in the footer frame.
+        """
+        links_info = [
+            {"text": "XenMiner", "url": "https://github.com/jacklevin74/xenminer"},
+            {"text": "XenMinerWrapper", "url": "https://github.com/JozefJarosciak/XenMinerWrapper/"},
+            {"text": "Xen.pub", "url": "https://xen.pub"},
+            {"text": "Follow me on X.com", "url": "https://twitter.com/jarosciak"}
+        ]
+
+        # Create a label with the text "Links:" and place it in the footer frame.
+        links_label = tk.Label(self.footer_frame, text="Links:")
+        links_label.grid(row=0, column=0)  # Adjust the grid placement as needed.
+
+        for index, link in enumerate(links_info):
+            # The column for link_label should start from 1 and increment by 2 each time
+            link_label = tk.Label(self.footer_frame, text=link["text"], fg="blue", cursor="hand2")
+            link_label.bind("<Button-1>", lambda e, url=link["url"]: self.open_webpage(url))
+            link_label.grid(row=0, column=index*2 + 1, sticky="w")
+
+            # Add | separator after each link except the last one
+            if index < len(links_info) - 1:
+                separator_label = tk.Label(self.footer_frame, text="|")
+                separator_label.grid(row=0, column=index*2 + 2, padx=(5, 5), sticky="w")
 
 if __name__ == "__main__":
     app = MinerApp()
