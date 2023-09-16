@@ -170,7 +170,6 @@ class MinerApp(tk.Tk):
             # Start the script for this tab
             self.run_miner_script(output_display)
 
-
     def run_miner_script(self, output_widget):
         python_env = self.python_env.get().strip()
         def get_hash_per_second(line):
