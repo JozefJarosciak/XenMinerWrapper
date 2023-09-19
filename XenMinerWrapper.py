@@ -194,7 +194,7 @@ class MinerApp(tk.Tk):
                 # Append the line to the Text widget if Parse Output is checked
                 if "valid hash" in line:
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    self.last_found_block_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    self.last_found_block_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     print(f"Detected a valid hash (mined a new block) at {current_time}!")
 
                     with self.lock:
