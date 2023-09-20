@@ -19,60 +19,42 @@ DIFFICULTY_PATTERN = re.compile(r"Updating difficulty to (\d+)")
 
 class MinerApp(tk.Tk):
     def __init__(self):
-
+        self.is_running = False
         super().__init__()
 
         # Initialize variables
+        self.start_time = datetime.now()
         self.miner_hash_rates = {}
         self.valid_hash_count = 0
         self.lock = threading.Lock()
         self.current_difficulty = 0  # Initialize to a default value
 
-
         # GUI setup
         self.title("XEN.pub's XenMiner Wrapper")
-        self.geometry("800x600")
+        self.geometry("1028x768")
         self.setup_ui()
         self.running_processes = []
         self.update_total_hash_rate()
 
     def setup_ui(self):
-        # Footer Frame
         self.footer_frame = self.create_footer_frame()
-
-        # Create links in the footer
         self.create_links_in_footer()
-
-        # XenMiner location label and textbox
         self.miner_location = self.create_label_and_entry("XenMiner GitHub Location", 0, DEFAULT_MINER_LOCATION)
-
-        # Ethereum address label and textbox
         self.eth_address = self.create_label_and_entry("Your Ethereum Address", 1, self.load_eth_address())
-
-        # Python environment label and textbox
         self.python_env = self.create_label_and_entry("Python Environment Location", 2, self.load_python_env())
-
-        # Combobox for parallel execution
         self.create_label_and_combobox("Parallel Executions (one per core)", 3)
-
-        # Frame for the buttons
         self.button_frame = tk.Frame(self)
-        self.button_frame.grid(row=4, column=0, columnspan=2, pady=20)
-
-        # Run script button inside the frame
-        self.run_btn = tk.Button(self.button_frame, text="Run", command=self.run_script)
+        self.button_frame.grid(row=4, column=0, columnspan=2, pady=5)
+        self.run_btn = tk.Button(self.button_frame, text="Run", command=self.run_script,
+                                 background='green', foreground='white', font=("Arial", 12, "bold"))
         self.run_btn.grid(row=4, column=0, padx=5)
-
-        # Stop script button inside the frame
-        self.stop_btn = tk.Button(self.button_frame, text="Stop", command=self.stop_script, state=tk.DISABLED)
+        self.stop_btn = tk.Button(self.button_frame, text="Stop", command=self.stop_script,
+                                  state=tk.DISABLED, background='light grey', foreground='white', font=("Arial", 12, "bold"))
         self.stop_btn.grid(row=4, column=1, padx=5)
-
-        # Tabs for parallel executions
         self.tab_control = ttk.Notebook(self)
         self.tab_control.grid(row=6, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
         self.grid_rowconfigure(6, weight=1)
         self.grid_columnconfigure(1, weight=1)
-
         self.footer_frame.grid(row=7, column=0, columnspan=2)
 
     def create_label_and_entry(self, label_text, row, default_value=""):
@@ -90,10 +72,30 @@ class MinerApp(tk.Tk):
         self.num_parallel.set("1")
         self.num_parallel.grid(row=row, column=1, padx=10, pady=10, sticky="w")
 
+    def toggle_run_button(self, state):
+        if state == "disabled":
+            self.run_btn.config(state=tk.DISABLED, background='light grey')
+            self.stop_btn.config(state=tk.NORMAL, background='orange')
+            self.num_parallel.config(state=tk.DISABLED)
+        else:
+            self.run_btn.config(state=tk.NORMAL, background='green')
+            self.stop_btn.config(state=tk.NORMAL, background='light grey')
+            self.num_parallel.config(state=tk.NORMAL)
+
+    def toggle_stop_button(self, state):
+        if state == "disabled":
+            self.stop_btn.config(state=tk.DISABLED, background='light grey')
+            self.run_btn.config(state=tk.NORMAL, background='green')
+            self.num_parallel.config(state=tk.NORMAL)
+        else:
+            self.stop_btn.config(state=tk.NORMAL, background='orange')
+            self.run_btn.config(state=tk.DISABLED, background='light grey')
+            self.num_parallel.config(state=tk.DISABLED)
+
 
     def run_script(self):
-        # Disable the Run button and Enable the Stop button
-        self.run_btn.config(state=tk.DISABLED)
+        self.is_running = True
+        self.toggle_run_button("disabled")
         self.stop_btn.config(state=tk.NORMAL)
 
         eth_address = self.eth_address.get().strip()
@@ -107,7 +109,6 @@ class MinerApp(tk.Tk):
             messagebox.showerror("Error", "Please specify the path to Python Environment! (e.g. C:\python\python.exe)")
             return
 
-        # Check if the Ethereum address and XenMiner location are provided
         if not self.validate_ethereum_address(eth_address):
             messagebox.showerror("Error", "Invalid Ethereum Address!")
             return
@@ -126,7 +127,6 @@ class MinerApp(tk.Tk):
             messagebox.showerror("Error", "Failed to fetch the miner script!")
             return
 
-        # Update the Ethereum address in the script
         miner_script = re.sub(r'account = "0x[0-9a-fA-F]{40}"', f'account = "{eth_address}"', miner_script)
 
         with open("miner.py", "w") as f:
@@ -141,7 +141,6 @@ class MinerApp(tk.Tk):
             tab = ttk.Frame(self.tab_control)
             self.tab_control.add(tab, text=f"Miner #{i+1}")
 
-            # Vertical Scrollbar for the output
             v_scroll = tk.Scrollbar(tab, orient="vertical")
             v_scroll.grid(row=0, column=1, sticky="ns")
 
@@ -149,11 +148,9 @@ class MinerApp(tk.Tk):
             output_display.grid(row=0, column=0, sticky="nsew")
 
             v_scroll.config(command=output_display.yview)
-            # Grid configuration
+
             tab.grid_columnconfigure(0, weight=1)
             tab.grid_rowconfigure(0, weight=1)
-
-            # Start the script for this tab
             self.run_miner_script(output_display, i)
 
     def run_miner_script(self, output_widget, miner_number):
@@ -163,10 +160,8 @@ class MinerApp(tk.Tk):
             match = re.search(r',\s*([\d.]+)', line)
 
             if match:
-                # Return the extracted number as a float.
                 return float(match.group(1))
             else:
-                # Return None if no match is found.
                 return None
         def extract_difficulty(line):
             match = re.search(r"Updating difficulty to (\d+)", line)
@@ -176,7 +171,6 @@ class MinerApp(tk.Tk):
 
 
         def run():
-            last_hash_per_second = None
             process = subprocess.Popen(
                 [python_env, 'miner.py'],
                 stdout=subprocess.PIPE,
@@ -191,7 +185,7 @@ class MinerApp(tk.Tk):
                 line = process.stdout.readline()
                 if not line:
                     break
-                # Append the line to the Text widget if Parse Output is checked
+
                 if "valid hash" in line:
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     self.last_found_block_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -222,25 +216,42 @@ class MinerApp(tk.Tk):
         self.footer_blocks_var.set("Found Blocks: --")
         self.footer_hash_rate_var.set("Total Hash/s: --")
         self.footer_latest_found_var.set("Latest Block (time): --")
-        self.footer_difficulty_var.set("Current Difficulty: --")
-
+        self.footer_difficulty_var.set("Difficulty: --")
+        self.footer_blocks_per_day_var.set("Est. Blocks/Day: --")
+        self.footer_elapsed_time_var.set("Elapsed Time: --")
 
     def update_total_hash_rate(self):
         self.footer_blocks_var.set(f"Found Blocks: {self.valid_hash_count:,}")
         total_hash_rate = sum(self.miner_hash_rates.values())
         self.footer_hash_rate_var.set(f"Total Hash/s: {total_hash_rate:,.2f}")
+        elapsed_time_in_seconds = (datetime.now() - self.start_time).total_seconds()
+        if elapsed_time_in_seconds != 0:
+            blocks_per_day = (self.valid_hash_count / elapsed_time_in_seconds) * 86400
+        else:
+            blocks_per_day = 0
 
-        # Assuming self.last_found_block_time holds the time of the latest found block
         if hasattr(self, 'last_found_block_time'):
             self.footer_latest_found_var.set(f"Latest Found: {self.last_found_block_time}")
 
         if isinstance(self.current_difficulty, (int, float)):
-            self.footer_difficulty_var.set(f"Current Difficulty: {self.current_difficulty:,}")
+            self.footer_difficulty_var.set(f"Difficulty: {self.current_difficulty:,}")
         else:
-            self.footer_difficulty_var.set(f"Current Difficulty: {self.current_difficulty}")
+            self.footer_difficulty_var.set(f"Difficulty: {self.current_difficulty}")
 
-        self.after(1000, self.update_total_hash_rate)  # Schedule this method to run every 0.5 seconds
+        self.footer_elapsed_time_var.set(f"Elapsed Time: {self.get_elapsed_time()}")
+        self.footer_blocks_per_day_var.set(f"Est. Blocks/Day: {blocks_per_day:.6f}")
 
+        self.after(1000, self.update_total_hash_rate)
+        if self.is_running:
+            self.after(1000, self.update_total_hash_rate)
+
+
+    def get_elapsed_time(self):
+        delta = datetime.now() - self.start_time
+        days = delta.days
+        hours, remainder = divmod(delta.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"{days}d {hours:02}:{minutes:02}:{seconds:02}"
 
     def open_webpage(self, url):
         webbrowser.open(url)
@@ -287,6 +298,7 @@ class MinerApp(tk.Tk):
         tab.grid_rowconfigure(0, weight=1)
         self.tab_control.select(tab)
     def stop_script(self):
+        self.is_running = False
         with self.lock:
             for process in self.running_processes:
                 try:
@@ -298,7 +310,7 @@ class MinerApp(tk.Tk):
         for tab in self.tab_control.tabs():
             self.tab_control.forget(tab)
         self.run_btn.config(state=tk.NORMAL)
-        self.stop_btn.config(state=tk.DISABLED)
+        self.toggle_stop_button("disabled")
         self.current_difficulty = 0
         time.sleep(1)
         self.reset_footer_labels()
@@ -312,48 +324,44 @@ class MinerApp(tk.Tk):
 
     def create_footer_frame(self):
         footer_frame = ttk.Frame(self)
-        # Define StringVars for dynamic values
         self.footer_blocks_var = tk.StringVar(value="Found Blocks: --")
         self.footer_hash_rate_var = tk.StringVar(value="Total Hash/s: --")
         self.footer_latest_found_var = tk.StringVar(value="Latest Block (time): 0")
-        self.footer_difficulty_var = tk.StringVar(value=f"Current Difficulty: {self.current_difficulty}")
+        self.footer_difficulty_var = tk.StringVar(value=f"Difficulty: {self.current_difficulty}")
+        self.footer_elapsed_time_var = tk.StringVar(value="Elapsed Time: --")
+        self.footer_blocks_per_day_var = tk.StringVar(value="Est. Blocks/Day: --")
 
-        # Create labels using the StringVars
         footer_blocks_label = ttk.Label(footer_frame, textvariable=self.footer_blocks_var)
         footer_hash_rate_label = ttk.Label(footer_frame, textvariable=self.footer_hash_rate_var)
         footer_latest_found_label = ttk.Label(footer_frame, textvariable=self.footer_latest_found_var)
         footer_difficulty_label = ttk.Label(footer_frame, textvariable=self.footer_difficulty_var)
+        footer_elapsed_time_label = ttk.Label(footer_frame, textvariable=self.footer_elapsed_time_var)
+        footer_blocks_per_day_label = ttk.Label(footer_frame, textvariable=self.footer_blocks_per_day_var)
 
-        # Position the labels in a grid layout
         footer_difficulty_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
         footer_hash_rate_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
         footer_blocks_label.grid(row=0, column=2, padx=5, pady=5, sticky="w")
         footer_latest_found_label.grid(row=0, column=3, padx=5, pady=5, sticky="w")
+        footer_elapsed_time_label.grid(row=0, column=4, padx=5, pady=5, sticky="w")
+        footer_blocks_per_day_label.grid(row=0, column=5, padx=5, pady=5, sticky="w")
 
         return footer_frame
 
     def create_links_in_footer(self):
-        """
-        Create links in the footer frame.
-        """
-        links_label = tk.Label(self.footer_frame, text="Links:")
-        links_label.grid(row=1, column=0)
-
         link1 = tk.Label(self.footer_frame, text="XenMiner", fg="blue", cursor="hand2")
         link1.bind("<Button-1>", lambda e: self.open_webpage("https://github.com/jacklevin74/xenminer"))
-        link1.grid(row=1, column=1)
+        link1.grid(row=1, column=2, sticky='w')
 
-        link2 = tk.Label(self.footer_frame, text="XenMinerWrapper", fg="blue", cursor="hand2")
+        link2 = tk.Label(self.footer_frame, text="XM Wrapper", fg="blue", cursor="hand2")
         link2.bind("<Button-1>", lambda e: self.open_webpage("https://github.com/JozefJarosciak/XenMinerWrapper/"))
-        link2.grid(row=1, column=2)
+        link2.grid(row=1, column=3, sticky='w')
 
         link3 = tk.Label(self.footer_frame, text="Xen.pub", fg="blue", cursor="hand2")
         link3.bind("<Button-1>", lambda e: self.open_webpage("https://xen.pub"))
-        link3.grid(row=1, column=3)
+        link3.grid(row=1, column=4, sticky='w')
 
 
 if __name__ == "__main__":
     app = MinerApp()
     app.protocol("WM_DELETE_WINDOW", app.on_closing)
     app.mainloop()
-
