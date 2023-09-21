@@ -102,19 +102,19 @@ class MinerApp(tk.Tk):
         miner_location = self.miner_location.get().strip().replace("github.com", "raw.githubusercontent.com").replace("/blob", "")
         python_env = self.python_env.get().strip()
 
-        self.save_eth_address()
-        self.save_python_env()
-
         if not python_env:
             messagebox.showerror("Error", "Please specify the path to Python Environment! (e.g. C:\python\python.exe)")
+            self.toggle_run_button("normal")  # Enable the "Run" button
             return
 
         if not self.validate_ethereum_address(eth_address):
             messagebox.showerror("Error", "Invalid Ethereum Address!")
+            self.toggle_run_button("normal")  # Enable the "Run" button
             return
 
         if not miner_location:
             messagebox.showerror("Error", "XenMiner Location cannot be empty!")
+            self.toggle_run_button("normal")  # Enable the "Run" button
             return
 
         process = subprocess.Popen([python_env, 'miner.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -186,7 +186,7 @@ class MinerApp(tk.Tk):
                 if not line:
                     break
 
-                if "valid hash" in line:
+                if "HTTP Status Code: 200" in line:
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     self.last_found_block_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     print(f"Detected a valid hash (mined a new block) at {current_time}!")
@@ -242,8 +242,6 @@ class MinerApp(tk.Tk):
         self.footer_blocks_per_day_var.set(f"Est. Blocks/Day: {blocks_per_day:.6f}")
 
         self.after(1000, self.update_total_hash_rate)
-        if self.is_running:
-            self.after(1000, self.update_total_hash_rate)
 
 
     def get_elapsed_time(self):
@@ -260,6 +258,7 @@ class MinerApp(tk.Tk):
         if os.path.exists('python_env.txt'):
             with open('python_env.txt', 'r') as f:
                 return f.read().strip()
+        return ""
 
     def save_python_env(self):
         with open('python_env.txt', 'w') as f:
@@ -269,6 +268,7 @@ class MinerApp(tk.Tk):
         if os.path.exists('eth_address.txt'):
             with open('eth_address.txt', 'r') as f:
                 return f.read().strip()
+        return ""
 
     def save_eth_address(self):
         with open('eth_address.txt', 'w') as f:
@@ -298,14 +298,14 @@ class MinerApp(tk.Tk):
         tab.grid_rowconfigure(0, weight=1)
         self.tab_control.select(tab)
     def stop_script(self):
-        self.is_running = False
         with self.lock:
             for process in self.running_processes:
                 try:
                     process.terminate()
                 except Exception as e:
                     print(f"Error stopping process: {e}")
-            self.running_processes.clear()
+
+        self.running_processes.clear()
 
         for tab in self.tab_control.tabs():
             self.tab_control.forget(tab)
@@ -315,6 +315,8 @@ class MinerApp(tk.Tk):
         time.sleep(1)
         self.reset_footer_labels()
         self.update_idletasks()  # Force the GUI to update immediately
+
+
 
 
     def on_closing(self):
