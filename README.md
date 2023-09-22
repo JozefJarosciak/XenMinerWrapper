@@ -12,15 +12,14 @@ Welcome to the XEN.pub's XenMiner Wrapper, a Python-based user interface for Xen
 6. **Cross-Platform**: Written in Python, this tool is platform-independent and should be able to run on Windows (confirmed), Linux (Ubuntu confirmed) and macOS.
 7. **Block Counter Support**: Counts total of all minted blocks across all threads.
 
+
 ## Latest Updates
-
-✅Tracking total hash power across all threads
-
-✅Display of total block count 
-
-✅Time of last block discovery
-
-✅Monitor elapsed time
+* ✅Live difficulty updates
+* ✅Tracking Total Hashing power across all active threads
+* ✅Display of total blocks found (counter) 
+* ✅Time of last block discovery
+* ✅Monitor Elapsed Time
+* ✅Show current rate of mining (Est. Blocks/day)
 
 
 ## Getting Started
