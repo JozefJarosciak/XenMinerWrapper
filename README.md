@@ -12,12 +12,26 @@ Welcome to the XEN.pub's XenMiner Wrapper, a Python-based user interface for Xen
 6. **Cross-Platform**: Written in Python, this tool is platform-independent and should be able to run on Windows (confirmed), Linux (Ubuntu confirmed) and macOS.
 7. **Block Counter Support**: Counts total of all minted blocks across all threads.
 
+## Latest Updates
+
+✅Tracking total hash power across all threads
+
+✅Display of total block count 
+
+✅Time of last block discovery
+
+✅Monitor elapsed time
+
+
 ## Getting Started
 
 1. Ensure you have Python 3.x and pip3 installed on your system.
 2. Then pip install -U -r requirements.txt
 3. Clone or download the repository.
-4. Run the `XenMiner UI Wrapper` script.
+4. Run the XenMiner UI Wrapper by executing following command:
+
+   `python3 XenMinerWrapper.py`
+ 
 5. Enter your Ethereum address, enter the path to your Python executable and select other options as needed.
 6. Click on the "Run" button to start mining.
 
