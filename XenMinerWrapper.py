@@ -129,7 +129,7 @@ class MinerApp(tk.Tk):
 
         miner_script = re.sub(r'account = "0x[0-9a-fA-F]{40}"', f'account = "{eth_address}"', miner_script)
 
-        with open("miner.py", "w") as f:
+        with open("config.conf", "w") as f:
             f.write(miner_script)
 
         for tab in self.tab_control.tabs():
