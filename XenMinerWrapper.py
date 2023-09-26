@@ -12,6 +12,7 @@ from tkinter import messagebox, ttk
 
 # Constants
 DEFAULT_MINER_LOCATION = 'https://github.com/jacklevin74/xenminer/blob/main/miner.py'
+DEFAULT_CONFIG_LOCATION = 'https://github.com/jacklevin74/xenminer/blob/main/config.conf'
 ETH_ADDRESS_PATTERN = re.compile(r'^0x[0-9a-fA-F]{40}$')
 HASH_PER_SECOND_PATTERN = re.compile(r',\s*([\d.]+)')
 DIFFICULTY_PATTERN = re.compile(r"Updating difficulty to (\d+)")
@@ -36,10 +37,11 @@ class MinerApp(tk.Tk):
         self.running_processes = []
         self.update_total_hash_rate()
 
+
+
     def setup_ui(self):
         self.footer_frame = self.create_footer_frame()
         self.create_links_in_footer()
-        self.miner_location = self.create_label_and_entry("XenMiner GitHub Location", 0, DEFAULT_MINER_LOCATION)
         self.eth_address = self.create_label_and_entry("Your Ethereum Address", 1, self.load_eth_address())
         self.python_env = self.create_label_and_entry("Python Environment Location", 2, self.load_python_env())
         self.create_label_and_combobox("Parallel Executions (one per core)", 3)
@@ -94,28 +96,59 @@ class MinerApp(tk.Tk):
 
 
     def run_script(self):
+        self.save_python_env()
+        self.save_eth_address()
         self.is_running = True
         self.toggle_run_button("disabled")
         self.stop_btn.config(state=tk.NORMAL)
-
-        eth_address = self.eth_address.get().strip()
-        miner_location = self.miner_location.get().strip().replace("github.com", "raw.githubusercontent.com").replace("/blob", "")
         python_env = self.python_env.get().strip()
+        eth_address = self.eth_address.get().strip()
 
-        if not python_env:
-            messagebox.showerror("Error", "Please specify the path to Python Environment! (e.g. C:\python\python.exe)")
-            self.toggle_run_button("normal")  # Enable the "Run" button
-            return
 
         if not self.validate_ethereum_address(eth_address):
             messagebox.showerror("Error", "Invalid Ethereum Address!")
             self.toggle_run_button("normal")  # Enable the "Run" button
             return
 
-        if not miner_location:
-            messagebox.showerror("Error", "XenMiner Location cannot be empty!")
+        if not python_env:
+            messagebox.showerror("Error", "Please specify the path to Python Environment! (e.g. C:\python\python.exe)")
             self.toggle_run_button("normal")  # Enable the "Run" button
             return
+
+
+
+        # Update the URLs to point to the raw GitHub content
+        miner_location = DEFAULT_MINER_LOCATION.replace("github.com", "raw.githubusercontent.com").replace("/blob", "")
+        config_location = DEFAULT_CONFIG_LOCATION.replace("github.com", "raw.githubusercontent.com").replace("/blob", "")
+
+        try:
+            # Download miner.py
+            miner_script = requests.get(miner_location).text
+            with open("miner.py", "w") as f:
+                f.write(miner_script)
+            config_content = requests.get(config_location).text  # Changed variable name here
+            with open("config.conf", "w") as f:
+                f.write(config_content)  # Now writing config_content to config.conf
+        except:
+            messagebox.showerror("Error", "Failed to fetch the scripts!")
+            return
+
+        time.sleep(1)
+
+
+        with open("config.conf", "r") as file:
+            lines = file.readlines()
+
+        with open("config.conf", "w") as file:
+            for line in lines:
+                if line.strip().startswith("account ="):
+                    file.write(f'account = {eth_address}\n')
+                else:
+                    file.write(line)
+
+        with open("config.conf", "r") as f:
+            updated_config_content = f.read()
+
 
         process = subprocess.Popen([python_env, 'miner.py'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         with self.lock:
@@ -127,16 +160,11 @@ class MinerApp(tk.Tk):
             messagebox.showerror("Error", "Failed to fetch the miner script!")
             return
 
-        miner_script = re.sub(r'account = "0x[0-9a-fA-F]{40}"', f'account = "{eth_address}"', miner_script)
-
-        with open("config.conf", "w") as f:
-            f.write(miner_script)
 
         for tab in self.tab_control.tabs():
             self.tab_control.forget(tab)
 
-        self.add_new_tab(miner_script, eth_address)
-
+        self.add_new_tab(updated_config_content, eth_address)
         for i in range(int(self.num_parallel.get())):
             tab = ttk.Frame(self.tab_control)
             self.tab_control.add(tab, text=f"Miner #{i+1}")
@@ -152,6 +180,11 @@ class MinerApp(tk.Tk):
             tab.grid_columnconfigure(0, weight=1)
             tab.grid_rowconfigure(0, weight=1)
             self.run_miner_script(output_display, i)
+
+
+
+
+
 
     def run_miner_script(self, output_widget, miner_number):
         python_env = self.python_env.get().strip()
@@ -243,7 +276,6 @@ class MinerApp(tk.Tk):
 
         self.after(1000, self.update_total_hash_rate)
 
-
     def get_elapsed_time(self):
         delta = datetime.now() - self.start_time
         days = delta.days
@@ -279,7 +311,7 @@ class MinerApp(tk.Tk):
 
     def add_new_tab(self, content, eth_address):
         tab = ttk.Frame(self.tab_control)
-        self.tab_control.add(tab, text="MINER SCRIPT", sticky="nsew")
+        self.tab_control.add(tab, text="Config.conf", sticky="nsew")
 
         download_time = datetime.now().strftime("%a %b %d %Y at %I:%M:%S %p")
         download_info = f"Last download: {download_time}\nOriginal Github Ethereum address has been replaced by your own: {eth_address}\n\n"
