@@ -1,6 +1,8 @@
 import os
 import re
+import shutil
 import subprocess
+import sys
 import threading
 import time
 import webbrowser
@@ -40,6 +42,7 @@ class MinerApp(tk.Tk):
 
 
     def setup_ui(self):
+
         self.footer_frame = self.create_footer_frame()
         self.create_links_in_footer()
         self.eth_address = self.create_label_and_entry("Your Ethereum Address", 1, self.load_eth_address())
@@ -59,18 +62,31 @@ class MinerApp(tk.Tk):
         self.grid_columnconfigure(1, weight=1)
         self.footer_frame.grid(row=7, column=0, columnspan=2)
 
+        self.python_env_label = tk.Label(self, text="Python Environment Location")
+        self.python_env_label.grid(row=2, column=0, padx=10, pady=10, sticky="e")
+
+        self.python_paths = self.find_python_paths()
+        self.python_env = ttk.Combobox(self, values=self.python_paths, width=70)
+        self.python_env.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+        self.python_env.insert(0, self.load_python_env())
+
+    def update_python_env_from_combobox(self, event):
+        selected_path = self.python_path_combobox.get()
+        self.python_env.delete(0, tk.END)
+        self.python_env.insert(0, selected_path)
+
     def create_label_and_entry(self, label_text, row, default_value=""):
-        tk.Label(self, text=label_text).grid(row=row, column=0, padx=10, pady=10, sticky="e")
-        entry = tk.Entry(self, width=70)
-        entry.grid(row=row, column=1, padx=10, pady=10, sticky="w")
-        entry.insert(0, default_value)
-        return entry
+            tk.Label(self, text=label_text).grid(row=row, column=0, padx=10, pady=10, sticky="e")
+            entry = tk.Entry(self, width=70)
+            entry.grid(row=row, column=1, padx=10, pady=10, sticky="w")
+            entry.insert(0, default_value)
+            return entry
 
     def create_label_and_combobox(self, label_text, row):
         tk.Label(self, text=label_text).grid(row=row, column=0, padx=10, pady=10, sticky="e")
         max_parallel = psutil.cpu_count(logical=False)
         values = [str(i) for i in range(1, max_parallel + 1)]
-        self.num_parallel = ttk.Combobox(self, values=values)
+        self.num_parallel = ttk.Combobox(self, values=values)  # Assign to self.num_parallel
         self.num_parallel.set("1")
         self.num_parallel.grid(row=row, column=1, padx=10, pady=10, sticky="w")
 
@@ -390,9 +406,44 @@ class MinerApp(tk.Tk):
         link2.bind("<Button-1>", lambda e: self.open_webpage("https://github.com/JozefJarosciak/XenMinerWrapper/"))
         link2.grid(row=1, column=3, sticky='w')
 
-        link3 = tk.Label(self.footer_frame, text="Xen.pub", fg="blue", cursor="hand2")
-        link3.bind("<Button-1>", lambda e: self.open_webpage("https://xen.pub"))
+        link3 = tk.Label(self.footer_frame, text="XenBlocks Dashboard", fg="blue", cursor="hand2")
+        link3.bind("<Button-1>", lambda e: self.open_webpage("https://xen.pub/index-xenblocks.php"))
         link3.grid(row=1, column=4, sticky='w')
+
+    def find_python_paths(self):
+        python_paths = set()
+
+        # Check common locations
+        if sys.platform == 'win32':
+            for common_location in ["C:\\Python{0}{1}\\python.exe".format(i, j) for i in range(3, 10) for j in range(0, 10)]:
+                if os.path.exists(common_location):
+                    python_paths.add(common_location)
+        elif sys.platform == 'darwin':  # macOS
+            common_locations = [
+                "/usr/local/bin/python3",
+                "/usr/bin/python3",
+            ]
+            python_paths.update(filter(os.path.exists, common_locations))
+        else:  # Linux and other UNIX-like systems
+            try:
+                result = subprocess.run(['whereis', '-b', 'python'], stdout=subprocess.PIPE, text=True)
+                paths = result.stdout.split()
+                python_paths.update(path for path in paths[1:] if path.endswith('python3') or path.endswith('python'))
+            except Exception as e:
+                print(f"Error running whereis command: {e}")
+
+        # Check PATH environment variable
+        for path_dir in os.environ['PATH'].split(os.pathsep):
+            python_path = os.path.join(path_dir, 'python.exe' if sys.platform == 'win32' else 'python3')
+            if os.path.exists(python_path):
+                python_paths.add(python_path)
+
+        # Use shutil.which to find python executable
+        which_python = shutil.which('python3') or shutil.which('python')
+        if which_python:
+            python_paths.add(which_python)
+
+        return list(python_paths)
 
 
 if __name__ == "__main__":
